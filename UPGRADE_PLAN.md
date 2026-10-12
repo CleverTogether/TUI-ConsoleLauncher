@@ -344,3 +344,37 @@ low-risk for the AGP 8->9 jump.
     settings (currently a plain text field for the package name, same
     as TEXT) -- scoped down to keep this change bounded; can revisit
     if it turns out to matter in practice.
+
+- 2026-10-13: User found a real crash: toggling "show notification that
+  t-ui is running" (Behavior.tui_notification) in the new settings
+  screen, then exiting (triggering reload()), crashed the app -- and
+  since the toggle persisted to disk, the app then crash-looped on
+  every subsequent launch (LauncherActivity is the home activity, so
+  this is effectively "phone's home screen won't open"). User
+  recovered the phone on their own before a fix was ready.
+  Root cause (pre-existing in the original code, not introduced by
+  this session's work -- it had simply never been exercised before,
+  since there was no easy way to toggle this preference until the new
+  settings screen): `LauncherActivity.onCreate()` called
+  `startService(keeperIntent)` for KeeperService (a foreground-type
+  service) with no exception handling, while the adjacent
+  `stopService()` call in the same if/else WAS wrapped in try/catch.
+  Starting a foreground-destined service can throw if the OS decides
+  the app isn't in an eligible state at that exact moment (a
+  well-documented Android restriction) -- and since the service runs in
+  the main process, that exception crashes the whole app.
+  Fixed every instance of this same unguarded pattern, not just the one
+  that crashed:
+  - LauncherActivity: `ContextCompat.startForegroundService()` wrapped
+    in try/catch instead of bare `startService()`.
+  - `KeeperService.onStartCommand()`: both `startForeground()` branches
+    now try/catch, `stopSelf()` on failure.
+  - `MusicManager2.init()` / `MusicService`: identical latent bug,
+    same fix applied (shared `startForegroundSafely()` helper in
+    MusicService).
+  Verified via a clean assemble. Committed as `2a143fd`.
+  - Also noted: GitHub reports this repo moved from
+    `ClevrerTogether/TUI-ConsoleLauncher` to
+    `CleverTogether/TUI-ConsoleLauncher` (org name typo fix). Pushes
+    via the old URL still redirect successfully, but future pushes
+    should use the corrected URL.
