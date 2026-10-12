@@ -30,9 +30,12 @@ public class settings implements CommandAbstraction {
         return new int[0];
     }
 
+    // Priority 6 -- one above every other command's max (5) -- so this reliably wins one
+    // of the (by default, only 2) default command-suggestion slots shown on an empty input,
+    // rather than competing on priority with the existing priority-5 commands (help/call/bbman).
     @Override
     public int priority() {
-        return 2;
+        return 6;
     }
 
     @Override

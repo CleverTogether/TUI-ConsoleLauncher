@@ -6,6 +6,9 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 /**
@@ -36,6 +39,15 @@ public class SettingsActivity extends AppCompatActivity {
         containerId = View.generateViewId();
         container.setId(containerId);
         setContentView(container);
+
+        // Edge-to-edge is mandatory from API 35+ (unavoidable on API 36+), so this screen's
+        // content needs the same manual systemBars() inset handling as the main launcher UI
+        // (see UIManager), otherwise its top entries draw underneath the status bar.
+        ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         if (savedInstanceState == null) {
             openCategory(null);
