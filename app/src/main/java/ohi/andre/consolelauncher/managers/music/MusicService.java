@@ -60,11 +60,7 @@ public class MusicService extends Service implements
         if(System.currentTimeMillis() - lastNotificationChange < 500 || songTitle == null || songTitle.length() == 0) return super.onStartCommand(intent, flags, startId);
 
         lastNotificationChange = System.currentTimeMillis();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            startForeground(NOTIFY_ID, buildNotification(this.getApplicationContext(), songTitle), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
-        } else {
-            startForeground(NOTIFY_ID, buildNotification(this.getApplicationContext(), songTitle));
-        }
+        startForegroundSafely();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -76,10 +72,22 @@ public class MusicService extends Service implements
         lastNotificationChange = System.currentTimeMillis();
 
         mp.start();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            startForeground(NOTIFY_ID, buildNotification(this.getApplicationContext(), songTitle), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
-        } else {
-            startForeground(NOTIFY_ID, buildNotification(this.getApplicationContext(), songTitle));
+        startForegroundSafely();
+    }
+
+    // The OS can refuse to promote a service to the foreground (e.g. the app wasn't in an
+    // eligible state at the moment this was called) -- without this catch, that exception
+    // crashes the whole process, since this service runs in it. Not being able to show the
+    // now-playing notification isn't worth taking the app down for.
+    private void startForegroundSafely() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(NOTIFY_ID, buildNotification(this.getApplicationContext(), songTitle), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+            } else {
+                startForeground(NOTIFY_ID, buildNotification(this.getApplicationContext(), songTitle));
+            }
+        } catch (Exception e) {
+            Tuils.log(e);
         }
     }
 

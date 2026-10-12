@@ -302,7 +302,11 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         Intent keeperIntent = new Intent(this, KeeperService.class);
         if (showNotification) {
             keeperIntent.putExtra(KeeperService.PATH_KEY, XMLPrefsManager.get(Behavior.home_path));
-            startService(keeperIntent);
+            try {
+                ContextCompat.startForegroundService(this, keeperIntent);
+            } catch (Exception e) {
+                Tuils.log(e);
+            }
         } else {
             try {
                 stopService(keeperIntent);

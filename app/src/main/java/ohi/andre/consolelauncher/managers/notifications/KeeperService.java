@@ -70,12 +70,23 @@ public class KeeperService extends Service {
 
             String path = intent != null ? intent.getStringExtra(PATH_KEY) : Tuils.getFolder().getAbsolutePath();
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                startForeground(ONGOING_NOTIFICATION_ID, buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
-                        clickCmd, showHome, lastCommands, upDown, priority), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
-            } else {
-                startForeground(ONGOING_NOTIFICATION_ID, buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
-                        clickCmd, showHome, lastCommands, upDown, priority));
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    startForeground(ONGOING_NOTIFICATION_ID, buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
+                            clickCmd, showHome, lastCommands, upDown, priority), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+                } else {
+                    startForeground(ONGOING_NOTIFICATION_ID, buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
+                            clickCmd, showHome, lastCommands, upDown, priority));
+                }
+            } catch (Exception e) {
+                // The OS can refuse to promote this service to the foreground (e.g. the app
+                // wasn't in an eligible state at the moment this was started) -- without this
+                // catch, that exception crashes the whole process, since this service runs in
+                // it. Not being able to show the "t-ui is running" notification isn't worth
+                // taking the app down for.
+                Tuils.log(e);
+                stopSelf();
+                return START_NOT_STICKY;
             }
 
             int lastCmdSize = XMLPrefsManager.getInt(Behavior.tui_notification_lastcmds_size);

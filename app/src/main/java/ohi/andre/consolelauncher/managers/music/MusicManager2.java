@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
+
+import androidx.core.content.ContextCompat;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -82,7 +84,11 @@ public class MusicManager2 implements MediaController.MediaPlayerControl {
     public void init() {
         playIntent = new Intent(mContext, MusicService.class);
         mContext.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-        mContext.startService(playIntent);
+        try {
+            ContextCompat.startForegroundService(mContext, playIntent);
+        } catch (Exception e) {
+            Tuils.log(e);
+        }
     }
 
     public void refresh() {
