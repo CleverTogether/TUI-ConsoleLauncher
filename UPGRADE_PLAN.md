@@ -378,3 +378,23 @@ low-risk for the AGP 8->9 jump.
     `CleverTogether/TUI-ConsoleLauncher` (org name typo fix). Pushes
     via the old URL still redirect successfully, but future pushes
     should use the corrected URL.
+
+- 2026-10-13: User confirmed the foreground-service crash fix works.
+  Requested two more fixes for the new settings screen:
+  1. Settings screen's top content overlapped the status bar (battery
+     icon etc.) -- `SettingsActivity` had no window-inset handling of
+     its own (only `UIManager`'s main launcher UI had the edge-to-edge
+     fix from earlier). Applied the same `systemBars()` inset-as-padding
+     treatment to its container view.
+  2. `settings` command should appear as a default suggestion on
+     launcher open. Traced the suggestion pipeline
+     (`SuggestionsManager.getSuggestions` -> `suggestCommand`) and found
+     the default command-suggestion pool for empty input has a hard
+     priority floor (`Suggestions.noinput_min_command_priority`,
+     default 5) and only shows the top 2 by priority
+     (`noinput_suggestions_order` default `"0(5)1(5)2(2)3(5)"`, type 2
+     = commands). `settings`'s priority (2) was nowhere close. Bumped
+     it to 6 -- one above every other command's current max (5, held
+     by help/call/bbman) -- to deterministically win a slot without
+     touching the global suggestion-count configuration.
+  Verified via a clean assemble. Committed as `fd5fc2d`.
