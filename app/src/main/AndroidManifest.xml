@@ -240,6 +240,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".commands.settings.SettingsActivity"
+            android:label="@string/settings_label"
+            android:exported="false" />
     </application>
 
 </manifest>

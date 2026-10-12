@@ -70,6 +70,7 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
     public static final int LOCATION_REQUEST_PERMISSION = 13;
 
     public static final int TUIXT_REQUEST = 10;
+    public static final int SETTINGS_REQUEST = 20;
 
     private UIManager ui;
     private MainManager main;
@@ -560,6 +561,8 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
             } else {
                 Tuils.sendOutput(this, data.getStringExtra(TuixtActivity.ERROR_KEY));
             }
+        } else if(requestCode == SETTINGS_REQUEST && resultCode == ohi.andre.consolelauncher.commands.settings.SettingsActivity.RESULT_SETTINGS_CHANGED) {
+            reload();
         }
     }
 
