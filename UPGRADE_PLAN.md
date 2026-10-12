@@ -312,3 +312,35 @@ low-risk for the AGP 8->9 jump.
   `WindowInsetsCompat.Type.ime()` and using the larger of the nav-bar /
   keyboard bottom inset as bottom padding. Verified via a clean
   assemble. Committed as `dd8f936`.
+
+- 2026-10-12: User asked for a GUI settings screen covering every
+  configuration option, each with a short description, since until now
+  settings were only reachable via the `config` terminal command or by
+  hand-editing XML files. Surveyed the existing `XMLPrefsSave`
+  framework first (forked research) rather than guessing scope: found
+  234 total settings across 10 category enums, 231 of which (99%)
+  already have a real human-written description via `info()` --
+  directly reusable as each setting's on-screen description.
+  - Added `androidx.preference:preference:1.2.1` and a new `settings`
+    command opening `SettingsActivity`: a root list of the 10
+    categories, each opening into that category's settings, built
+    generically from `XMLPrefsSave[]` metadata (BOOLEAN -> switch,
+    INTEGER/TEXT/APP -> text field, COLOR -> text field with a live
+    swatch icon) -- nothing hand-written per individual setting.
+  - User chose (a) apply changes only when leaving the settings screen
+    (not after every single edit, to avoid the launcher visibly
+    flashing/restarting repeatedly) and (b) native Android
+    Settings-app look over a custom terminal-themed one.
+  - Each change writes to disk via the same `XMLPrefsSave.parent()
+    .write()` path the `config` command already uses -- no change to
+    the on-disk format. Live-apply reuses the existing `TuixtActivity`
+    request/result pattern (`SettingsActivity` reports back via
+    `onActivityResult`) to trigger the already-existing
+    `Reloadable#reload()` restart, rather than inventing a new
+    mechanism.
+  - Verified via a clean assemble of the playstore debug APK.
+    Committed as `710c1d3`.
+  - Not yet done: a proper installed-app picker UI for the 6 `APP`-type
+    settings (currently a plain text field for the package name, same
+    as TEXT) -- scoped down to keep this change bounded; can revisit
+    if it turns out to matter in practice.
