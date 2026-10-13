@@ -1,7 +1,10 @@
 package ohi.andre.consolelauncher.commands.main.raw;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+
+import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
@@ -15,6 +18,7 @@ import ohi.andre.consolelauncher.commands.CommandsPreferences;
 import ohi.andre.consolelauncher.commands.ExecutePack;
 import ohi.andre.consolelauncher.commands.main.MainPack;
 import ohi.andre.consolelauncher.commands.main.specific.ParamCommand;
+import ohi.andre.consolelauncher.commands.settings.SettingsActivity;
 import ohi.andre.consolelauncher.managers.xml.XMLPrefsManager;
 import ohi.andre.consolelauncher.tuils.Tuils;
 import ohi.andre.consolelauncher.tuils.interfaces.Reloadable;
@@ -124,6 +128,14 @@ public class tui extends ParamCommand {
 
                 return null;
             }
+        },
+        settings {
+            @Override
+            public String exec(ExecutePack pack) {
+                Intent intent = new Intent(pack.context, SettingsActivity.class);
+                ActivityCompat.startActivityForResult((Activity) pack.context, intent, LauncherActivity.SETTINGS_REQUEST, null);
+                return null;
+            }
         }
 //        ,
 //        exclude_message {
@@ -200,9 +212,12 @@ public class tui extends ParamCommand {
         return Param.labels();
     }
 
+    // Priority 6 -- one above every other command's max (5) -- so "tui" reliably wins one
+    // of the (by default, only 2) default command-suggestion slots shown on an empty input,
+    // surfacing "-settings" (and every other tui subcommand) one tap away from launcher open.
     @Override
     public int priority() {
-        return 4;
+        return 6;
     }
 
     @Override

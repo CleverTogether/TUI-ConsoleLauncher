@@ -341,8 +341,8 @@
         \n-log [fileName] -> log the text on screen to the file
         \n-priority [command] [int] -> set the priority of the selected command
         \n-sourcecode -> open the GitHub page
-        \n-folder -> print the path of the t-ui folder</string>
-    <string name="help_settings">Open a graphical settings screen to view and edit every configuration option, each with a description</string>
+        \n-folder -> print the path of the t-ui folder
+        \n-settings -> open a graphical settings screen to view and edit every configuration option, each with a description</string>
     <string name="settings_label">T-UI Settings</string>
     <string name="help_tuinotes">-add [line] [text] -> add a new note at the specified line (the note will be appended if line is omitted)
         \n-rm [line] -> remove the note at the specified line
