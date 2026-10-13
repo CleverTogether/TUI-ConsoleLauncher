@@ -446,3 +446,26 @@ low-risk for the AGP 8->9 jump.
      onBindViewHolder) giving it a warning-triangle icon and bold,
      amber-colored title.
   Verified via a clean assemble. Committed as `cc2df54`.
+
+- 2026-10-13: User reported both the back button AND the restart
+  button on the settings screen were closing the whole app instead of
+  returning to (or restarting) the console. Both went through the same
+  setResult()+finish() path, which depends on Android implicitly
+  returning focus to the LauncherActivity instance that originally
+  called startActivityForResult() -- that wasn't happening reliably on
+  the test device (exact platform-level cause undiagnosed, since no
+  logcat access from this sandbox; the symptom was consistent across
+  both interactions, pointing at the shared finish() path rather than
+  either interaction's own wiring).
+  Replaced the implicit return with an explicit, deterministic one:
+  SettingsActivity now re-targets LauncherActivity directly with an
+  Intent (FLAG_ACTIVITY_REORDER_TO_FRONT; LauncherActivity is
+  singleTask, so this resumes its existing instance via onNewIntent()
+  -- the same mechanism it already uses for exec-on-reopen -- rather
+  than creating a new one), carrying an EXTRA_RELOAD_AFTER_SETTINGS
+  extra only when something actually changed. This replaces the
+  startActivityForResult()/onActivityResult() plumbing entirely;
+  simplified tui.java's -settings param back to a plain startActivity()
+  accordingly, removed the now-unused SETTINGS_REQUEST/
+  RESULT_SETTINGS_CHANGED constants.
+  Verified via a clean assemble. Committed as `014c1dd`.
