@@ -1,17 +1,23 @@
 package ohi.andre.consolelauncher.commands.settings;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.PreferenceViewHolder;
 import androidx.preference.SwitchPreferenceCompat;
 
 import ohi.andre.consolelauncher.managers.xml.XMLPrefsManager;
@@ -77,8 +83,9 @@ public class SettingsCategoryFragment extends PreferenceFragmentCompat {
         if (categoryName == null) {
             requireActivity().setTitle("Settings");
 
-            restartPreference = new Preference(requireContext());
+            restartPreference = new WarningPreference(requireContext());
             restartPreference.setKey("restart_tui");
+            restartPreference.setIcon(android.R.drawable.ic_dialog_alert);
             restartPreference.setTitle("Restart TUI to apply changes");
             restartPreference.setSummary("You've changed one or more settings -- tap to restart and apply them");
             restartPreference.setOnPreferenceClickListener(pref -> {
@@ -210,5 +217,27 @@ public class SettingsCategoryFragment extends PreferenceFragmentCompat {
         // user has since popped back to this (root) screen -- onCreatePreferences only runs
         // once per fragment instance, so this is what keeps the button's visibility current.
         updateRestartVisibility();
+    }
+
+    // Gives the "Restart TUI to apply changes" entry a warning color + bold title, so it
+    // reads as an action to take rather than just another row in the list.
+    private static class WarningPreference extends Preference {
+        private static final int WARNING_COLOR = Color.parseColor("#FFA000");
+
+        WarningPreference(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
+            super.onBindViewHolder(holder);
+
+            View titleView = holder.findViewById(android.R.id.title);
+            if (titleView instanceof TextView) {
+                TextView title = (TextView) titleView;
+                title.setTextColor(WARNING_COLOR);
+                title.setTypeface(title.getTypeface(), Typeface.BOLD);
+            }
+        }
     }
 }

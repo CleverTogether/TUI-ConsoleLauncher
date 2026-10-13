@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -52,6 +53,23 @@ public class SettingsActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             openCategory(null);
         }
+
+        // Registering an explicit OnBackPressedCallback here -- rather than overriding the
+        // legacy Activity#onBackPressed() -- fixes back presses closing this whole screen (and
+        // the launcher activity underneath it) in one press instead of stepping back one level
+        // at a time. The legacy override relies on Fragment's own back-stack callback correctly
+        // intercepting first; this checks the back-stack state directly instead, so it does the
+        // right thing regardless of how that interaction behaves.
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                } else {
+                    finishWithResult();
+                }
+            }
+        });
     }
 
     void openCategory(@Nullable String categoryName) {
@@ -59,15 +77,6 @@ public class SettingsActivity extends AppCompatActivity {
                 .replace(containerId, SettingsCategoryFragment.newInstance(categoryName));
         if (categoryName != null) t.addToBackStack(null);
         t.commit();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
-        } else {
-            finishWithResult();
-        }
     }
 
     void finishWithResult() {
