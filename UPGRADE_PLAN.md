@@ -427,3 +427,22 @@ low-risk for the AGP 8->9 jump.
   (not just at screen-build time) so it correctly shows up after a
   change made in a different category screen, once the user pops back
   to root. Verified via a clean assemble. Committed as `a2cebaf`.
+
+- 2026-10-13: User reported two issues with the restart button /
+  settings screen:
+  1. Pressing back on the settings screen exited the whole app instead
+     of stepping back one level at a time. Root cause: overriding
+     Activity#onBackPressed() directly doesn't compose reliably with
+     PreferenceFragmentCompat's own fragment-back-stack handling (a
+     known AndroidX pitfall -- Google's own guidance is to register an
+     explicit OnBackPressedCallback instead of overriding the legacy
+     method). Fixed by replacing the override with a callback
+     registered via getOnBackPressedDispatcher() that checks the
+     back-stack state directly, so it does the right thing regardless
+     of how Fragment's own callback behaves.
+  2. Wanted the "Restart TUI to apply changes" entry to look more like
+     a warning/action rather than blend in with the rest of the list.
+     Added a small WarningPreference subclass (overrides
+     onBindViewHolder) giving it a warning-triangle icon and bold,
+     amber-colored title.
+  Verified via a clean assemble. Committed as `cc2df54`.
