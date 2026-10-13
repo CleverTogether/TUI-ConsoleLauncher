@@ -417,3 +417,13 @@ low-risk for the AGP 8->9 jump.
   - Documented `-settings` in the `help_tui` string; removed the
     now-unused `help_settings` string.
   Verified via a clean assemble. Committed as `4d6e9ed`.
+
+- 2026-10-13: Added a "Restart TUI to apply changes" button to the
+  settings root screen, shown only when a setting was actually
+  changed (`SettingsActivity.anyChanged`), so the user doesn't have to
+  know that backing all the way out is what applies changes. Tapping
+  it calls the same `finishWithResult()` path `onBackPressed()` already
+  used. Visibility is refreshed in the root fragment's `onResume()`
+  (not just at screen-build time) so it correctly shows up after a
+  change made in a different category screen, once the user pops back
+  to root. Verified via a clean assemble. Committed as `a2cebaf`.
