@@ -398,3 +398,22 @@ low-risk for the AGP 8->9 jump.
      by help/call/bbman) -- to deterministically win a slot without
      touching the global suggestion-count configuration.
   Verified via a clean assemble. Committed as `fd5fc2d`.
+
+- 2026-10-13: User flagged that a standalone "settings" command could
+  read as "open the phone's Android Settings" rather than T-UI's own
+  config screen. Agreed and folded it into the existing "tui" command
+  family as "tui -settings" (alongside -about, -reset, -rm, etc.)
+  instead of a bare top-level word, consistent with how every other
+  T-UI-specific action is already namespaced.
+  - Removed the standalone `settings` command; added a `settings`
+    Param to `tui.java` launching `SettingsActivity` the same way.
+  - Since default-suggestion promotion only applies to whole top-level
+    commands (not individual params), moved the priority-6 bump from
+    the old standalone command onto `tui` itself -- user chose this
+    over special-casing "tui -settings" as a literal one-tap
+    suggestion, so it's discovered the same way every other tui
+    subcommand already is (tap "tui", then see "-settings" among the
+    next suggestions).
+  - Documented `-settings` in the `help_tui` string; removed the
+    now-unused `help_settings` string.
+  Verified via a clean assemble. Committed as `4d6e9ed`.
