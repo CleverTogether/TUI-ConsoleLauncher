@@ -1,10 +1,8 @@
 package ohi.andre.consolelauncher.commands.main.raw;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 
-import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.File;
@@ -132,8 +130,7 @@ public class tui extends ParamCommand {
         settings {
             @Override
             public String exec(ExecutePack pack) {
-                Intent intent = new Intent(pack.context, SettingsActivity.class);
-                ActivityCompat.startActivityForResult((Activity) pack.context, intent, LauncherActivity.SETTINGS_REQUEST, null);
+                pack.context.startActivity(new Intent(pack.context, SettingsActivity.class));
                 return null;
             }
         }

@@ -1,5 +1,6 @@
 package ohi.andre.consolelauncher.commands.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -12,6 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentTransaction;
 
+import ohi.andre.consolelauncher.LauncherActivity;
+
 /**
  * GUI settings screen: lets the user browse and edit every XMLPrefsSave-backed
  * configuration value (previously only reachable via the "config" terminal command or
@@ -20,12 +23,9 @@ import androidx.fragment.app.FragmentTransaction;
  *
  * Changes are written to disk immediately (see SettingsCategoryFragment#writeValue), but
  * the running launcher only reloads once, when this activity is closed (see
- * LauncherActivity#onActivityResult's handling of SETTINGS_REQUEST), to avoid the
- * launcher visibly restarting after every single edit.
+ * finishWithResult()), to avoid the launcher visibly restarting after every single edit.
  */
 public class SettingsActivity extends AppCompatActivity {
-
-    public static final int RESULT_SETTINGS_CHANGED = 1;
 
     static volatile boolean anyChanged = false;
 
@@ -80,7 +80,14 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     void finishWithResult() {
-        setResult(anyChanged ? RESULT_SETTINGS_CHANGED : RESULT_CANCELED);
+        // Explicitly re-targeting LauncherActivity (singleTask, so this resumes its existing
+        // instance via onNewIntent() rather than creating a new one) instead of relying on
+        // setResult()+finish() returning focus to it implicitly -- that path wasn't reliably
+        // resuming the caller, closing the whole app instead.
+        Intent intent = new Intent(this, LauncherActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        if (anyChanged) intent.putExtra(LauncherActivity.EXTRA_RELOAD_AFTER_SETTINGS, true);
+        startActivity(intent);
         finish();
     }
 }

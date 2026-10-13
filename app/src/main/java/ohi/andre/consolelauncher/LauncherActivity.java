@@ -70,7 +70,13 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
     public static final int LOCATION_REQUEST_PERMISSION = 13;
 
     public static final int TUIXT_REQUEST = 10;
-    public static final int SETTINGS_REQUEST = 20;
+
+    // Read in onNewIntent() -- see SettingsActivity#finishWithResult(). Not handled via
+    // startActivityForResult()/onActivityResult() because finishing SettingsActivity wasn't
+    // reliably returning focus to this activity on its own; explicitly re-targeting this
+    // singleTask activity with an intent (routed through onNewIntent(), the same mechanism
+    // already used below for exec-on-reopen) is a more direct, deterministic way back.
+    public static final String EXTRA_RELOAD_AFTER_SETTINGS = "reload_after_settings";
 
     private UIManager ui;
     private MainManager main;
@@ -565,8 +571,6 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
             } else {
                 Tuils.sendOutput(this, data.getStringExtra(TuixtActivity.ERROR_KEY));
             }
-        } else if(requestCode == SETTINGS_REQUEST && resultCode == ohi.andre.consolelauncher.commands.settings.SettingsActivity.RESULT_SETTINGS_CHANGED) {
-            reload();
         }
     }
 
@@ -641,6 +645,10 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
             i.putExtra(MainManager.CMD, cmd);
             i.putExtra(MainManager.NEED_WRITE_INPUT, true);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(i);
+        }
+
+        if(intent.getBooleanExtra(EXTRA_RELOAD_AFTER_SETTINGS, false)) {
+            reload();
         }
     }
 
