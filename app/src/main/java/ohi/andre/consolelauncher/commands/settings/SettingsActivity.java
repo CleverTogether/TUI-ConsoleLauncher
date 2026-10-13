@@ -66,8 +66,12 @@ public class SettingsActivity extends AppCompatActivity {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
         } else {
-            setResult(anyChanged ? RESULT_SETTINGS_CHANGED : RESULT_CANCELED);
-            finish();
+            finishWithResult();
         }
+    }
+
+    void finishWithResult() {
+        setResult(anyChanged ? RESULT_SETTINGS_CHANGED : RESULT_CANCELED);
+        finish();
     }
 }

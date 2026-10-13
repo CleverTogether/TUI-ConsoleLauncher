@@ -41,6 +41,8 @@ public class SettingsCategoryFragment extends PreferenceFragmentCompat {
             "Behavior", "UI", "Theme", "Suggestions", "Toolbar", "Apps", "Notifications", "Rss", "Reply", "Cmd"
     };
 
+    private Preference restartPreference;
+
     static SettingsCategoryFragment newInstance(@Nullable String categoryName) {
         SettingsCategoryFragment f = new SettingsCategoryFragment();
         Bundle b = new Bundle();
@@ -74,6 +76,17 @@ public class SettingsCategoryFragment extends PreferenceFragmentCompat {
 
         if (categoryName == null) {
             requireActivity().setTitle("Settings");
+
+            restartPreference = new Preference(requireContext());
+            restartPreference.setKey("restart_tui");
+            restartPreference.setTitle("Restart TUI to apply changes");
+            restartPreference.setSummary("You've changed one or more settings -- tap to restart and apply them");
+            restartPreference.setOnPreferenceClickListener(pref -> {
+                ((SettingsActivity) requireActivity()).finishWithResult();
+                return true;
+            });
+            screen.addPreference(restartPreference);
+            updateRestartVisibility();
 
             for (String name : CATEGORY_NAMES) {
                 Preference p = new Preference(requireContext());
@@ -181,5 +194,21 @@ public class SettingsCategoryFragment extends PreferenceFragmentCompat {
     private void writeValue(XMLPrefsSave save, String value) {
         save.parent().write(save, value);
         SettingsActivity.anyChanged = true;
+        updateRestartVisibility();
+    }
+
+    private void updateRestartVisibility() {
+        if (restartPreference != null) {
+            restartPreference.setVisible(SettingsActivity.anyChanged);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Catches the case where a change was made in a different category screen and the
+        // user has since popped back to this (root) screen -- onCreatePreferences only runs
+        // once per fragment instance, so this is what keeps the button's visibility current.
+        updateRestartVisibility();
     }
 }
