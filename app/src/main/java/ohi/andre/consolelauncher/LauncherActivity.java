@@ -91,8 +91,14 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
             dispose();
             finish();
 
-            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            // Explicit component intent instead of an implicit ACTION_MAIN/CATEGORY_HOME one:
+            // the implicit form resolves through Android's default-Home-app selection, so if
+            // T-UI isn't currently set as the device's default launcher (e.g. while testing,
+            // before publishing), this would relaunch whatever launcher IS default instead of
+            // relaunching T-UI itself.
+            Intent startMain = new Intent(this, LauncherActivity.class);
             startMain.addCategory(Intent.CATEGORY_HOME);
+            startMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             CharSequence reloadMessage = Tuils.EMPTYSTRING;
             for (ReloadMessageCategory c : categories) {
