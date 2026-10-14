@@ -469,3 +469,26 @@ low-risk for the AGP 8->9 jump.
   accordingly, removed the now-unused SETTINGS_REQUEST/
   RESULT_SETTINGS_CHANGED constants.
   Verified via a clean assemble. Committed as `014c1dd`.
+
+- 2026-10-14: Previous navigation fix (explicit re-targeting via
+  Intent) didn't actually fix the reported "app closes" bug -- no
+  crash.txt was written (ruling out an exception), and diagnostic
+  questions revealed the real cause: T-UI isn't set as the test
+  device's default Home app, and `LauncherActivity.reload()`'s
+  self-relaunch fires an *implicit* `ACTION_MAIN`/`CATEGORY_HOME`
+  intent, which Android resolves through its default-Home-app
+  selection -- landing on the device's actual default launcher instead
+  of T-UI. User saw "my phone's normal home screen" after both the
+  back button and the restart button, which (since back only reaches
+  reload() when a change was pending) both funnel through this same
+  bug. This is a pre-existing issue in `reload()` itself (also used by
+  `tui -reset`), not something introduced by the settings screen --
+  just never previously exercised without T-UI set as default.
+  Fixed by targeting `LauncherActivity` explicitly (component intent +
+  `FLAG_ACTIVITY_NEW_TASK`) instead of relying on implicit HOME-intent
+  resolution. Verified via a clean assemble. Committed as `437576a`.
+  - Noted for later: `KeeperService.java`'s "click notification -> show
+    home" feature (`tui_notification_click_showhome`) constructs the
+    same kind of implicit HOME intent and likely has the identical
+    latent issue -- not fixed yet, out of scope of this specific bug
+    report.
