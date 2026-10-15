@@ -885,6 +885,22 @@ public enum Behavior implements XMLPrefsSave {
             return XMLPrefsSave.BOOLEAN;
         }
     },
+    numbering_notes {
+        @Override
+        public String defaultValue() {
+            return "true";
+        }
+
+        @Override
+        public String info() {
+            return "If true, notes are automatically listed with numbers";
+        }
+
+        @Override
+        public String type() {
+            return XMLPrefsSave.BOOLEAN;
+        }
+    },
     orientation {
         @Override
         public String defaultValue() {

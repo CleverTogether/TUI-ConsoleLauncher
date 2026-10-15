@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Arrays;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.EditTextPreference;
@@ -95,7 +97,10 @@ public class SettingsCategoryFragment extends PreferenceFragmentCompat {
             screen.addPreference(restartPreference);
             updateRestartVisibility();
 
-            for (String name : CATEGORY_NAMES) {
+            String[] sortedCategoryNames = CATEGORY_NAMES.clone();
+            Arrays.sort(sortedCategoryNames, String.CASE_INSENSITIVE_ORDER);
+
+            for (String name : sortedCategoryNames) {
                 Preference p = new Preference(requireContext());
                 p.setKey("category_" + name);
                 p.setTitle(name);
@@ -109,7 +114,10 @@ public class SettingsCategoryFragment extends PreferenceFragmentCompat {
         } else {
             requireActivity().setTitle(categoryName);
 
-            for (XMLPrefsSave save : valuesFor(categoryName)) {
+            XMLPrefsSave[] saves = valuesFor(categoryName);
+            Arrays.sort(saves, (a, b) -> a.label().compareToIgnoreCase(b.label()));
+
+            for (XMLPrefsSave save : saves) {
                 screen.addPreference(buildPreference(save));
             }
         }
