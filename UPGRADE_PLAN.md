@@ -492,3 +492,21 @@ low-risk for the AGP 8->9 jump.
     same kind of implicit HOME intent and likely has the identical
     latent issue -- not fixed yet, out of scope of this specific bug
     report.
+
+### 2026-10-15: Settings sort order + ported note-numbering from a fork
+
+- Settings GUI (`SettingsCategoryFragment.java`): both the root category
+  list and each category's individual settings list are now sorted
+  alphabetically by label (`Arrays.sort` with a case-insensitive
+  comparator), instead of following enum declaration order.
+- Notes: searched the public GitHub fork network of this project (the
+  upstream is `fandreuz/TUI-ConsoleLauncher`; checked ~294 forks) for a
+  fork that numbers notes automatically, per the user's recollection.
+  Found it in `v1nc/T-UI-Expert`, which adds one line to
+  `NotesManager.invalidateNotes()`:
+  `if(XMLPrefsManager.getBoolean(Expert.numbering_notes)){ t = (j+1)+"."+t; }`
+  Ported just that line (not the fork's broader custom "Expert" options
+  category) into our `NotesManager.java`, backed by a new
+  `Behavior.numbering_notes` boolean (default `true`, matching the
+  fork's default) alongside the other `notes_*` behavior settings.
+  Verified via a clean `assemblePlaystoreDebug`. Committed as `3f64139`.
