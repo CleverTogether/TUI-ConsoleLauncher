@@ -49,9 +49,12 @@ android {
         flavorDimensions = ["default"]
         fdroid {
             dimension "default"
+            buildConfigField "boolean", "BUSYBOX_DOWNLOAD_ENABLED", "true"
         }
         playstore {
             dimension "default"
+            // Google Play forbids downloading executable code from outside Play.
+            buildConfigField "boolean", "BUSYBOX_DOWNLOAD_ENABLED", "false"
         }
     }
 

@@ -480,7 +480,7 @@ public class MainManager {
             final String trimmed = input.trim();
             final String cmd = trimmed.split(" ")[0];
 
-            if (!BusyBoxInstaller.isInstalled(mContext)) {
+            if (BuildConfig.BUSYBOX_DOWNLOAD_ENABLED && !BusyBoxInstaller.isInstalled(mContext)) {
                 String[] common = {"ping", "echo", "ls", "grep", "cat", "vi", "top", "ps", "ip"};
                 for (String c : common) {
                     if (cmd.equalsIgnoreCase(c)) {

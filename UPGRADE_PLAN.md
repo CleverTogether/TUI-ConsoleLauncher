@@ -510,3 +510,32 @@ low-risk for the AGP 8->9 jump.
   `Behavior.numbering_notes` boolean (default `true`, matching the
   fork's default) alongside the other `notes_*` behavior settings.
   Verified via a clean `assemblePlaystoreDebug`. Committed as `3f64139`.
+
+### 2026-10-20: Play Store submission prep (steps 1-2 in progress)
+
+- Step 1 done: generated a real release keystore (`release-upload.jks`,
+  alias `tui-upload`, RSA 2048, valid to 2056; gitignored, wired via the
+  gitignored `local.properties`), replacing the throwaway test key.
+  Verified signed `assemblePlaystoreRelease` / `bundlePlaystoreRelease`
+  (R8 + resource shrinking) and `apksigner verify`. The alias is only an
+  internal keystore label, never shown to users or in Play Console;
+  user chose to keep it. **Keystore + password must be backed up outside
+  the sandbox** (user to confirm).
+- Pre-privacy-policy code audit of network/data use found a Play policy
+  risk: `BusyBoxInstaller` downloads a native binary from
+  `github.com/EXALAB/Busybox-static` and executes it (SHA-256 pinned, but
+  Play's Device and Network Abuse policy bans downloading executable code
+  from outside Play; also likely non-functional on targetSdk >= 29 due to
+  exec-from-app-data restrictions). Decision: keep in the `fdroid` flavor,
+  disable in `playstore` via a per-flavor
+  `BuildConfig.BUSYBOX_DOWNLOAD_ENABLED` flag. In the Play build
+  `bbman -install` reports "not available", and MainManager no longer
+  intercepts `ls`/`ping`/etc. with "install BusyBox" (that block only
+  runs when the flag is true), so they run through the normal shell.
+- Network/data inventory for the privacy policy + Data Safety form:
+  OpenWeatherMap (city, or lat/lon if location weather is used; user's own
+  API key), `tui.tarunshankerpandey.com` (third-party theme download,
+  sends theme name; user chose to keep and disclose), Pastebin changelog,
+  Google `generate_204` connectivity check, user-configured RSS/HTML
+  extract URLs. Contacts/phone state/files are local-only. No ads, no
+  analytics/crash SDKs.

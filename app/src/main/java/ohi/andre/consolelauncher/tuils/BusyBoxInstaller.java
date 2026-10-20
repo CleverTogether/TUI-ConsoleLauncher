@@ -1,6 +1,8 @@
 package ohi.andre.consolelauncher.tuils;
 
 import android.content.Context;
+
+import ohi.andre.consolelauncher.BuildConfig;
 import android.content.SharedPreferences;
 import android.os.Build;
 import java.io.BufferedInputStream;
@@ -53,6 +55,11 @@ public class BusyBoxInstaller {
     }
 
     public static void install(final Context context, final InstallationCallback callback) {
+        if (!BuildConfig.BUSYBOX_DOWNLOAD_ENABLED) {
+            if (callback != null) callback.onError("not available in this version of the app");
+            return;
+        }
+
         new Thread(() -> {
             File binDir = new File(context.getFilesDir(), "bin");
             if (!binDir.exists()) binDir.mkdir();
