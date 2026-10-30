@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy - T-UI Console Launcher</title>
+<style>
+:root { --bg:#fff; --fg:#1b1f1c; --mut:#59635c; --line:#d7ddd8; --acc:#1a7f37; }
+@media (prefers-color-scheme: dark) { :root { --bg:#0b0f0c; --fg:#e4eee7; --mut:#9aa89f; --line:#27332b; --acc:#4cd964; } }
+body { background:var(--bg); color:var(--fg); font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; margin:0; }
+main { max-width:760px; margin:0 auto; padding:24px 16px 64px; }
+h1 { font-size:1.7rem; } h2 { margin-top:2rem; border-bottom:1px solid var(--line); padding-bottom:.3rem; }
+a { color:var(--acc); } code { background:var(--line); padding:1px 5px; border-radius:4px; }
+table { border-collapse:collapse; width:100%; display:block; overflow-x:auto; }
+th,td { border:1px solid var(--line); padding:6px 10px; text-align:left; vertical-align:top; }
+</style>
+</head>
+<body><main>
+<h1>Privacy Policy for T-UI Console Launcher</h1>
+<p><strong>Effective date:</strong> 2026-10-30
+<strong>Developer:</strong> CleverTogether
+<strong>Contact:</strong> vladimir@clevertogether.net
+<strong>Source code:</strong> https://github.com/CleverTogether/TUI-ConsoleLauncher</p>
+<p>T-UI Console Launcher ("the app") is an open-source, terminal-style Android launcher. This policy explains what
+data the app handles and where it goes.</p>
+<h2>Summary</h2>
+<ul>
+<li>The developer <strong>does not operate any server</strong> for this app and <strong>does not collect, receive, or store</strong> your data.</li>
+<li>The app has <strong>no accounts, no advertising, and no analytics or crash-reporting services</strong>.</li>
+<li>Almost everything the app does happens <strong>on your device</strong>. A few optional features contact third-party
+  services directly from your device; these are listed below.</li>
+</ul>
+<h2>Data the app accesses on your device</h2>
+<p>The app only accesses the following when you use the related feature or grant the related permission. This data is
+used to show results in the app and is <strong>not sent to the developer or to any third party by the app</strong>, except
+where stated under "Network requests".</p>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Permission</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Installed apps list</td>
+<td>Query all packages</td>
+<td>Showing and launching your apps (core launcher function)</td>
+</tr>
+<tr>
+<td>Contacts</td>
+<td>Read/write contacts</td>
+<td>The contacts and call commands</td>
+</tr>
+<tr>
+<td>Phone number dialing</td>
+<td>Call phone</td>
+<td>Placing a call only when you run the call command</td>
+</tr>
+<tr>
+<td>Phone/network state</td>
+<td>Read phone state</td>
+<td>Showing the current network type in status output</td>
+</tr>
+<tr>
+<td>Location</td>
+<td>Fine/coarse location</td>
+<td>Location and weather commands</td>
+</tr>
+<tr>
+<td>Notifications</td>
+<td>Notification access (you enable it in system settings)</td>
+<td>Showing and replying to notifications inside the app</td>
+</tr>
+<tr>
+<td>Files and media</td>
+<td>Media audio</td>
+<td>The built-in music player. File commands and the text editor work inside the app's own folder</td>
+</tr>
+<tr>
+<td>Camera</td>
+<td>Camera</td>
+<td>Controlling the flashlight</td>
+</tr>
+<tr>
+<td>Bluetooth, Wi-Fi, network state</td>
+<td>Bluetooth, Wi-Fi, network</td>
+<td>Status and toggle commands</td>
+</tr>
+<tr>
+<td>System settings</td>
+<td>Modify system settings</td>
+<td>Brightness command</td>
+</tr>
+</tbody>
+</table>
+<p>Your configuration (themes, settings, notes, command history) is stored in the app's own folder on your device.
+A local crash log may be written there (<code>crash.txt</code>) and is never uploaded.</p>
+<h2>Network requests</h2>
+<p>The app makes network requests only for the features below, always over HTTPS, and sends them directly from your
+device to the service named. The developer does not see these requests.</p>
+<ul>
+<li><strong>Weather (OpenWeatherMap, api.openweathermap.org):</strong> if you configure weather, the app sends either your city
+  name or, if you use location-based weather, your device's latitude and longitude, together with the API key you
+  entered. See OpenWeatherMap's privacy policy.</li>
+<li><strong>Online themes (tui.tarunshankerpandey.com):</strong> if you download a theme, the app sends the theme name to this
+  third-party server and receives the theme file.</li>
+<li><strong>Changelog (pastebin.com):</strong> the app can fetch a changelog text from Pastebin.</li>
+<li><strong>Connectivity check (clients3.google.com):</strong> the app can make a request to Google to check whether the
+  internet is reachable.</li>
+<li><strong>RSS feeds and HTML extraction:</strong> if you add feeds or web addresses, the app fetches those addresses.</li>
+<li><strong>Web searches and links:</strong> commands such as search open your browser; what happens next is governed by the
+  site you open.</li>
+</ul>
+<p>Like any network request, these services can see your device's IP address. We do not control their data
+practices; please review their policies.</p>
+<h2>Sharing, selling, and retention</h2>
+<p>The developer does not receive your data, so nothing is shared, sold, or retained by the developer. Third-party
+services above handle the requests they receive under their own policies.</p>
+<h2>Permissions you control</h2>
+<p>You can revoke any permission or notification access at any time in Android settings. Features that depend on a
+revoked permission will stop working; the rest of the app continues to work.</p>
+<h2>Children</h2>
+<p>The app is not directed at children under 13 and does not knowingly collect any personal information.</p>
+<h2>Deleting your data</h2>
+<p>Because the developer holds no data about you, there is nothing for the developer to delete. Uninstalling the app
+removes its local data from your device.</p>
+<h2>Changes to this policy</h2>
+<p>If this policy changes, the updated version will be published at this address with a new effective date.</p>
+<h2>Contact</h2>
+<p>Questions: vladimir@clevertogether.net</p>
+</main></body>
+</html>

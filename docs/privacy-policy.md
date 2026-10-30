@@ -2,7 +2,7 @@
 
 **Effective date:** 2026-10-30
 **Developer:** CleverTogether
-**Contact:** vladimir.mihaylov@clevertogether.com
+**Contact:** vladimir@clevertogether.net
 **Source code:** https://github.com/CleverTogether/TUI-ConsoleLauncher
 
 T-UI Console Launcher ("the app") is an open-source, terminal-style Android launcher. This policy explains what
@@ -29,7 +29,7 @@ where stated under "Network requests".
 | Phone/network state | Read phone state | Showing the current network type in status output |
 | Location | Fine/coarse location | Location and weather commands |
 | Notifications | Notification access (you enable it in system settings) | Showing and replying to notifications inside the app |
-| Files and media | All files access, media audio | File-browsing and editing commands, and the built-in music player |
+| Files and media | Media audio | The built-in music player. File commands and the text editor work inside the app's own folder |
 | Camera | Camera | Controlling the flashlight |
 | Bluetooth, Wi-Fi, network state | Bluetooth, Wi-Fi, network | Status and toggle commands |
 | System settings | Modify system settings | Brightness command |
@@ -82,4 +82,4 @@ If this policy changes, the updated version will be published at this address wi
 
 ## Contact
 
-Questions: vladimir.mihaylov@clevertogether.com
+Questions: vladimir@clevertogether.net

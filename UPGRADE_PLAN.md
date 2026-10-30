@@ -558,3 +558,16 @@ low-risk for the AGP 8->9 jump.
   Biggest remaining review risk: `MANAGE_EXTERNAL_STORAGE` (fallback
   documented). Notification-listener, FGS and sensitive-permission
   disclosures are covered in the pack.
+
+- 2026-10-30: Decision: no all-files access in the Play build. Moved
+  `MANAGE_EXTERNAL_STORAGE` to `src/fdroid/AndroidManifest.xml`, added a
+  per-flavor `BuildConfig.ALL_FILES_ACCESS` flag (fdroid true, playstore
+  false) that gates the startup all-files prompt in `LauncherActivity`.
+  File commands (shell `ls`/`cd`, editor) stay in the app folder (default
+  `home_path`); elsewhere the shell reports "Permission denied". Verified with
+  `aapt2 dump permissions`: playstore release has 0, fdroid has 1.
+  Contact email changed to vladimir@clevertogether.net in the policy/pack.
+- Store assets generated in `docs/store-assets/` (feature graphic 1024x500;
+  512px icon candidates on a dark background, since the original icon is
+  transparent). Added `docs/privacy-policy.html` (styled standalone page
+  for GitHub Pages) next to the markdown source.

@@ -239,7 +239,7 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         }
 
         // Special check for MANAGE_EXTERNAL_STORAGE (API 30+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (BuildConfig.ALL_FILES_ACCESS && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!android.os.Environment.isExternalStorageManager()) {
                 try {
                     Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);

@@ -50,11 +50,14 @@ android {
         fdroid {
             dimension "default"
             buildConfigField "boolean", "BUSYBOX_DOWNLOAD_ENABLED", "true"
+            buildConfigField "boolean", "ALL_FILES_ACCESS", "true"
         }
         playstore {
             dimension "default"
             // Google Play forbids downloading executable code from outside Play.
             buildConfigField "boolean", "BUSYBOX_DOWNLOAD_ENABLED", "false"
+            // Play restricts MANAGE_EXTERNAL_STORAGE; the Play build stays in the app folder.
+            buildConfigField "boolean", "ALL_FILES_ACCESS", "false"
         }
     }
 
