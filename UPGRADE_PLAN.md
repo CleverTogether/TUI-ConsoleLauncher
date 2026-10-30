@@ -539,3 +539,22 @@ low-risk for the AGP 8->9 jump.
   Google `generate_204` connectivity check, user-configured RSS/HTML
   extract URLs. Contacts/phone state/files are local-only. No ads, no
   analytics/crash SDKs.
+
+- 2026-10-30: Play prep. Changed `applicationId` `ohi.andre.consolelauncher`
+  -> `com.clevertogether.tui` (permanent after first upload; avoids the
+  original author's namespace and Play impersonation/duplicate risk; the
+  package ID was confirmed not currently on Play). Renamed the custom
+  signature permission to `${applicationId}.permission.RECEIVE_CMD` (manifest
+  placeholder + `BuildConfig.APPLICATION_ID` in `LauncherActivity`), since
+  custom permission names are device-global and would block installing next
+  to the original T-UI. Java package/`namespace` unchanged. App name is now
+  "T-UI Console Launcher". The config folder follows the new ID
+  (`Android/data/com.clevertogether.tui/files`), so existing test installs
+  are separate and custom config must be copied once. Verified all variants
+  build and the release APK reports the new package/label/permission.
+- Wrote `docs/privacy-policy.md` (to be hosted at a public URL) and
+  `docs/play-store-submission.md` (listing text, Data Safety answers,
+  permission/FGS declaration drafts, release/testing checklist).
+  Biggest remaining review risk: `MANAGE_EXTERNAL_STORAGE` (fallback
+  documented). Notification-listener, FGS and sensitive-permission
+  disclosures are covered in the pack.

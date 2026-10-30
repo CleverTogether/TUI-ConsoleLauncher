@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "ohi.andre.consolelauncher"
+        applicationId "com.clevertogether.tui"
         minSdk 21
         targetSdk 36
         versionCode 301
