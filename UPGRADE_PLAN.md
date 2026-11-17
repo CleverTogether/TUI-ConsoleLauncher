@@ -571,3 +571,11 @@ low-risk for the AGP 8->9 jump.
   512px icon candidates on a dark background, since the original icon is
   transparent). Added `docs/privacy-policy.html` (styled standalone page
   for GitHub Pages) next to the markdown source.
+
+## 2026-11-17 - Pages, notes spacing, Enter opens first app suggestion
+- GitHub Pages enabled for master:/docs; privacy policy live at https://clevertogether.github.io/TUI-ConsoleLauncher/privacy-policy.html (HTTP 200). Use this URL in Play Console.
+- Play developer account: organization sign-up chosen (skips the personal-account closed-test requirement). D-U-N-S supplied by the owner.
+- NotesManager: numbering now "1. text" (space after the dot).
+- TerminalManager/SuggestionsManager: pressing Enter with a partial single-word input and an app as the first suggestion now launches that app (`applyFirstAppOnEnter`). Exact matches (e.g. `ls`) and stale suggestion lists are left alone.
+- Rebuilt playstore release APK/AAB into dist/.
+

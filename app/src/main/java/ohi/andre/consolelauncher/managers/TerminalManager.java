@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ohi.andre.consolelauncher.commands.main.MainPack;
+import ohi.andre.consolelauncher.managers.suggestions.SuggestionsManager;
 import ohi.andre.consolelauncher.managers.xml.XMLPrefsManager;
 import ohi.andre.consolelauncher.managers.xml.options.Behavior;
 import ohi.andre.consolelauncher.managers.xml.options.Theme;
@@ -296,10 +297,18 @@ public class TerminalManager {
         requestInputFocus();
     }
 
+    private SuggestionsManager suggestionsManager;
+
+    public void setSuggestionsManager(SuggestionsManager suggestionsManager) {
+        this.suggestionsManager = suggestionsManager;
+    }
+
     private boolean onNewInput() {
         if (mInputView == null) {
             return false;
         }
+
+        if (suggestionsManager != null) suggestionsManager.applyFirstAppOnEnter();
 
         CharSequence input = mInputView.getText();
 

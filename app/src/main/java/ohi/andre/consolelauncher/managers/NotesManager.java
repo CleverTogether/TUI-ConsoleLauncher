@@ -278,7 +278,7 @@ public class NotesManager {
 
             CharSequence t = n.text;
             if(XMLPrefsManager.getBoolean(Behavior.numbering_notes)) {
-                t = (j + 1) + "." + t;
+                t = (j + 1) + ". " + t;
             }
             t = lockPattern.matcher(t).replaceAll(String.valueOf(n.lock));
             t = rowPattern.matcher(t).replaceAll(String.valueOf(j + 1));

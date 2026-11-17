@@ -118,6 +118,7 @@ public class SuggestionsManager {
 
     public SuggestionsManager(LinearLayout suggestionsView, MainPack mainPack, TerminalManager mTerminalAdapter) {
         this.suggestionsView = suggestionsView;
+        mTerminalAdapter.setSuggestionsManager(this);
         this.pack = mainPack;
         this.mTerminalAdapter = mTerminalAdapter;
 
@@ -395,6 +396,32 @@ public class SuggestionsManager {
         } else {
             mTerminalAdapter.focusInputEnd();
         }
+    }
+
+    /**
+     * Called when Enter is pressed: if the user typed a partial app name and the suggestions
+     * list is showing apps, replaces the input with the first one so it gets launched.
+     * An input that already matches a suggestion exactly (e.g. the command "ls") is left alone.
+     */
+    public void applyFirstAppOnEnter() {
+        String input = mTerminalAdapter.getInput().trim();
+        if(input.length() == 0 || input.contains(Tuils.SPACE) || suggestionsView.getChildCount() == 0) return;
+
+        Suggestion first = null;
+        for(int i = 0; i < suggestionsView.getChildCount(); i++) {
+            Object tag = suggestionsView.getChildAt(i).getTag(R.id.suggestion_id);
+            if(!(tag instanceof Suggestion)) return;
+
+            Suggestion s = (Suggestion) tag;
+            if(s.text != null && s.text.trim().equalsIgnoreCase(input)) return;
+            if(i == 0) first = s;
+        }
+
+        if(first == null || first.type != Suggestion.TYPE_APP || first.text == null) return;
+//        the list is refreshed asynchronously, don't act on a stale one
+        if(!first.text.toLowerCase().contains(input.toLowerCase())) return;
+
+        mTerminalAdapter.setInput(first.getText(), first.object);
     }
 
     public void requestSuggestion(final String input) {
