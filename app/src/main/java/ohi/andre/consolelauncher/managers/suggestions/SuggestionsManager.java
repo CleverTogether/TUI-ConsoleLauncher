@@ -399,8 +399,8 @@ public class SuggestionsManager {
     }
 
     /**
-     * Called when Enter is pressed: if the user typed a partial app name and the suggestions
-     * list is showing apps, replaces the input with the first one so it gets launched.
+     * Called when Enter is pressed: if the user typed a partial app/command/alias name,
+     * replaces the input with the first suggestion so it gets run.
      * An input that already matches a suggestion exactly (e.g. the command "ls") is left alone.
      */
     public void applyFirstAppOnEnter() {
@@ -417,7 +417,8 @@ public class SuggestionsManager {
             if(i == 0) first = s;
         }
 
-        if(first == null || first.type != Suggestion.TYPE_APP || first.text == null) return;
+        if(first == null || first.text == null) return;
+        if(first.type != Suggestion.TYPE_APP && first.type != Suggestion.TYPE_COMMAND && first.type != Suggestion.TYPE_ALIAS) return;
 //        the list is refreshed asynchronously, don't act on a stale one
         if(!first.text.toLowerCase().contains(input.toLowerCase())) return;
 

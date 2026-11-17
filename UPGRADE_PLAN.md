@@ -579,3 +579,4 @@ low-risk for the AGP 8->9 jump.
 - TerminalManager/SuggestionsManager: pressing Enter with a partial single-word input and an app as the first suggestion now launches that app (`applyFirstAppOnEnter`). Exact matches (e.g. `ls`) and stale suggestion lists are left alone.
 - Rebuilt playstore release APK/AAB into dist/.
 
+- Enter-completes-first-suggestion now also covers commands and aliases (e.g. `e` + Enter runs `exit`), not only apps.
