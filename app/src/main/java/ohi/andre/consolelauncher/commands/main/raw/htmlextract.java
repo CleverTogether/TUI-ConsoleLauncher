@@ -158,7 +158,7 @@ public class htmlextract extends ParamCommand {
 
             @Override
             public String exec(ExecutePack pack) {
-                pack.context.startActivity(Tuils.webPage("https://github.com/Andre1299/TUI-ConsoleLauncher/wiki/HTMLExtract"));
+                pack.context.startActivity(Tuils.webPage("https://github.com/CleverTogether/TUI-ConsoleLauncher/wiki/HTMLExtract"));
                 return null;
             }
         },

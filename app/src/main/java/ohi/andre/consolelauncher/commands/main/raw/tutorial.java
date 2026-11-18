@@ -13,7 +13,7 @@ import ohi.andre.consolelauncher.tuils.Tuils;
 
 public class tutorial implements CommandAbstraction {
 
-    final String url = "https://github.com/Andre1299/TUI-ConsoleLauncher/wiki";
+    final String url = "https://github.com/CleverTogether/TUI-ConsoleLauncher/wiki";
 
     @Override
     public String exec(ExecutePack pack) throws Exception {
