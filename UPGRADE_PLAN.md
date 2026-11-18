@@ -585,3 +585,5 @@ low-risk for the AGP 8->9 jump.
 - New `backup` command (`-export`, `-import`) backed by `tuils/BackupManager`. Export zips the whole config folder (settings XMLs, aliases, notes, themes, rss/html/notification configs...) except `crash.txt` and `old/`, plus a `tui-backup.txt` marker. Import extracts to a temp folder first (zip-slip checked, marker required), then copies over the config folder and restarts T-UI.
 - Uses the Storage Access Framework (create/open document), so no storage permission is needed and it works under scoped storage.
 - Results are handled in `LauncherActivity.onActivityResult` (`BACKUP_EXPORT_REQUEST` / `BACKUP_IMPORT_REQUEST`).
+- Backup import now also accepts a plain zip of an older version's config folder (no marker needed; one wrapper folder is stripped). Missing options are filled with defaults by the XML loader on restart; files absent from the zip are left untouched.
+- Removed `tui -sourcecode` (pointed at a third-party repo) and its help line.

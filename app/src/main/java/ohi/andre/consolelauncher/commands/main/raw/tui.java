@@ -93,13 +93,6 @@ public class tui extends ParamCommand {
                 return pack.context.getString(R.string.output_invalidarg);
             }
         },
-        sourcecode {
-            @Override
-            public String exec(ExecutePack pack) {
-                pack.context.startActivity(Tuils.webPage("https://github.com/cycloarcane/TUI-ConsoleLauncher"));
-                return null;
-            }
-        },
         reset {
             @Override
             public String exec(ExecutePack pack) {

@@ -343,7 +343,6 @@
         \n-reset -> removes the t-ui folder and resets default settings (restart required)
         \n-log [fileName] -> log the text on screen to the file
         \n-priority [command] [int] -> set the priority of the selected command
-        \n-sourcecode -> open the GitHub page
         \n-folder -> print the path of the t-ui folder
         \n-settings -> open a graphical settings screen to view and edit every configuration option, each with a description</string>
     <string name="settings_label">T-UI Settings</string>

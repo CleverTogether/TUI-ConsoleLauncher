@@ -18,7 +18,9 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * Exports T-UI's config folder (settings, aliases, notes, themes, ...) to a single zip file
- * and restores it, so everything can be moved to another phone.
+ * and restores it, so everything can be moved to another phone. The zip holds the files exactly
+ * as they are in the folder (no wrapper folder), so a plain zip of an older version's folder can be
+ * restored too.
  */
 public class BackupManager {
 
@@ -88,14 +90,14 @@ public class BackupManager {
         if(!tmp.mkdirs()) throw new IOException("cannot create a temporary folder");
 
         try {
-            boolean marker = false;
+            boolean looksLikeConfig = false;
             byte[] buffer = new byte[8192];
             String tmpPath = tmp.getCanonicalPath() + File.separator;
 
             try (ZipInputStream zip = new ZipInputStream(is)) {
                 ZipEntry entry;
                 while((entry = zip.getNextEntry()) != null) {
-                    if(entry.getName().equals(MARKER)) marker = true;
+                    if(entry.getName().equals(MARKER) || entry.getName().toLowerCase().endsWith(".xml")) looksLikeConfig = true;
                     if(entry.isDirectory() || entry.getName().equals(MARKER)) continue;
 
                     File out = new File(tmp, entry.getName());
@@ -111,9 +113,16 @@ public class BackupManager {
                 }
             }
 
-            if(!marker) throw new IOException("this is not a T-UI backup");
+            if(!looksLikeConfig) throw new IOException("this is not a T-UI backup");
 
-            return copyDir(tmp, folder);
+//            a hand-made zip of the config folder may wrap everything in one top-level folder
+            File root = tmp;
+            File[] top = tmp.listFiles();
+            if(top != null && top.length == 1 && top[0].isDirectory()) root = top[0];
+
+//            files missing from the zip are left alone, and options missing from the XML
+//            files are filled with their defaults the next time T-UI loads them
+            return copyDir(root, folder);
         } finally {
             deleteRecursive(tmp);
         }
