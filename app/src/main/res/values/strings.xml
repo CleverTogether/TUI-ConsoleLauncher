@@ -214,6 +214,9 @@
 
 
     <string name="help_airplane">Toggle airplane mode</string>
+    <string name="help_backup">-export -> save your settings, aliases and notes to a zip file
+        \n-import -> restore them from a zip file made with -export (replaces current ones, then restarts)
+    </string>
     <string name="help_alias">-add [aliasName] [alias content] -> add a new alias
         \n-rm [aliasName] -> remove an existing alias
         \n-ls -> list your aliases

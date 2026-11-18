@@ -580,3 +580,8 @@ low-risk for the AGP 8->9 jump.
 - Rebuilt playstore release APK/AAB into dist/.
 
 - Enter-completes-first-suggestion now also covers commands and aliases (e.g. `e` + Enter runs `exit`), not only apps.
+
+## 2026-11-18 - backup export/import
+- New `backup` command (`-export`, `-import`) backed by `tuils/BackupManager`. Export zips the whole config folder (settings XMLs, aliases, notes, themes, rss/html/notification configs...) except `crash.txt` and `old/`, plus a `tui-backup.txt` marker. Import extracts to a temp folder first (zip-slip checked, marker required), then copies over the config folder and restarts T-UI.
+- Uses the Storage Access Framework (create/open document), so no storage permission is needed and it works under scoped storage.
+- Results are handled in `LauncherActivity.onActivityResult` (`BACKUP_EXPORT_REQUEST` / `BACKUP_IMPORT_REQUEST`).

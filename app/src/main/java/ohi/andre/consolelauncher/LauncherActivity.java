@@ -70,6 +70,8 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
     public static final int LOCATION_REQUEST_PERMISSION = 13;
 
     public static final int TUIXT_REQUEST = 10;
+    public static final int BACKUP_EXPORT_REQUEST = 20;
+    public static final int BACKUP_IMPORT_REQUEST = 21;
 
     // Read in onNewIntent() -- see SettingsActivity#finishWithResult(). Not handled via
     // startActivityForResult()/onActivityResult() because finishing SettingsActivity wasn't
@@ -571,6 +573,11 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if((requestCode == BACKUP_EXPORT_REQUEST || requestCode == BACKUP_IMPORT_REQUEST) && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            handleBackup(requestCode == BACKUP_EXPORT_REQUEST, data.getData());
+            return;
+        }
+
         if(requestCode == TUIXT_REQUEST && resultCode != 0) {
             if(resultCode == TuixtActivity.BACK_PRESSED) {
                 Tuils.sendOutput(this, R.string.tuixt_back_pressed);
@@ -578,6 +585,23 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
                 Tuils.sendOutput(this, data.getStringExtra(TuixtActivity.ERROR_KEY));
             }
         }
+    }
+
+    private void handleBackup(final boolean export, final android.net.Uri uri) {
+        new Thread(() -> {
+            try {
+                if(export) {
+                    int n = ohi.andre.consolelauncher.tuils.BackupManager.export(this, uri);
+                    Tuils.sendOutput(this, "Backup saved (" + n + " files)");
+                } else {
+                    int n = ohi.andre.consolelauncher.tuils.BackupManager.restore(this, uri);
+                    Tuils.sendOutput(this, "Backup restored (" + n + " files), restarting...");
+                    runOnUiThread(() -> new android.os.Handler().postDelayed(this::reload, 1500));
+                }
+            } catch (Exception e) {
+                Tuils.sendOutput(this, (export ? "Backup failed: " : "Restore failed: ") + e.getMessage());
+            }
+        }).start();
     }
 
     @Override
