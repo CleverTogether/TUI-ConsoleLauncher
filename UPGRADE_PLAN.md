@@ -590,3 +590,6 @@ low-risk for the AGP 8->9 jump.
 - In-app tutorial/wiki links (alias, apps, config, htmlextract, notes, notifications, reply, tutorial, tuiweather) now point to https://github.com/CleverTogether/TUI-ConsoleLauncher/wiki. The wiki still needs its pages created. `donate` still opens the original author PayPal (decision pending).
 - Wiki (https://github.com/CleverTogether/TUI-ConsoleLauncher/wiki) populated with the upstream wiki pages; internal links rewritten to this repo, the upstream author's footer/email left out, Home gets our contact.
 - Removed the `donate` command (opened the original author's PayPal) and its strings.
+
+## 2026-11-20 - minSdk 24
+- Play Console rejected the first AAB: "Play automatic protection requires a minimum SDK version of 24 or higher". minSdk raised from 21 to 24 (Android 7.0) so Play Integrity automatic protection can stay on. Android 5.0-6.0 devices (<~1% of users) are no longer supported. README updated; AAB/APK rebuilt.

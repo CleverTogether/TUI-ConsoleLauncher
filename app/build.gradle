@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId "com.clevertogether.tui"
-        minSdk 21
+        minSdk 24
         targetSdk 36
         versionCode 301
         versionName "v6.15.1-updated-v2"

@@ -40,7 +40,7 @@ To enable a full Linux environment, you can install BusyBox directly from the la
 
 ## 🛠 Modern Build System
 *   **Target SDK:** Updated to **API 34 (Android 14)**.
-*   **Min SDK:** API 21 (Android 5.0).
+*   **Min SDK:** API 24 (Android 7.0).
 *   **AndroidX Migration:** Fully migrated from legacy Support Libraries to **AndroidX**.
 *   **Gradle & AGP:** Updated to Gradle 8.2 and Android Gradle Plugin 8.2.0.
 *   **Java Compatibility:** Built with **Java 17** support.
