@@ -100,12 +100,17 @@ public class KeeperService extends Service {
                 startForeground(ONGOING_NOTIFICATION_ID, minimal);
             }
 
+            if(!NotificationManagerCompat.from(getApplicationContext()).areNotificationsEnabled()) {
+                Tuils.sendOutput(getApplicationContext(), "Notifications are turned off for T-UI: enable them in Android Settings > Apps > T-UI Console Launcher > Notifications to see the tui_notification.");
+            }
+
             try {
                 NotificationManagerCompat.from(getApplicationContext()).notify(ONGOING_NOTIFICATION_ID,
                         buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
                                 clickCmd, showHome, lastCommands, upDown, priority));
             } catch (Exception e) {
                 Tuils.log(e);
+                Tuils.sendOutput(getApplicationContext(), "tui_notification (full version) failed: " + e);
             }
         } catch (Exception e) {
 //            The OS can refuse to promote this service to the foreground, or building the
@@ -113,6 +118,7 @@ public class KeeperService extends Service {
 //            service runs in its process.
             Tuils.log(e);
             Tuils.toFile(e);
+            Tuils.sendOutput(getApplicationContext(), "tui_notification failed: " + e);
             stopSelf();
             return START_NOT_STICKY;
         }
