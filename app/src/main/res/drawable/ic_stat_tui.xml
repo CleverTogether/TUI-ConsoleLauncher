@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- ">_" status bar icon: status bar icons must be a simple single-colour shape -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M4,6.5 L5.6,5 L12,12 L5.6,19 L4,17.5 L9,12 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M13,17 L20,17 L20,19 L13,19 Z" />
+</vector>

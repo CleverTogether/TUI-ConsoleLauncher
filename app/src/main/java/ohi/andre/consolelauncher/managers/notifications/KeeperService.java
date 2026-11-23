@@ -84,17 +84,28 @@ public class KeeperService extends Service {
             String path = intent != null ? intent.getStringExtra(PATH_KEY) : null;
             if(path == null) path = Tuils.getFolder() != null ? Tuils.getFolder().getAbsolutePath() : "/";
 
-            Notification notification = buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
-                    clickCmd, showHome, lastCommands, upDown, priority);
-
 //            every start request made with startForegroundService() must be answered with
 //            startForeground(), not only the first one: otherwise Android kills the app a few
 //            seconds later (this happened whenever the launcher was opened while the service was
 //            already running). Calling it again just refreshes the notification.
+//
+//            The notification given to startForeground() is a minimal one: if the system finds
+//            anything wrong with it, it kills the app ("Bad notification for startForeground").
+//            The full notification (with the last commands and the command input) replaces it
+//            right after through notify(), where a rejection is harmless.
+            Notification minimal = buildMinimalNotification(getApplicationContext(), title, subtitle);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                startForeground(ONGOING_NOTIFICATION_ID, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+                startForeground(ONGOING_NOTIFICATION_ID, minimal, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
             } else {
-                startForeground(ONGOING_NOTIFICATION_ID, notification);
+                startForeground(ONGOING_NOTIFICATION_ID, minimal);
+            }
+
+            try {
+                NotificationManagerCompat.from(getApplicationContext()).notify(ONGOING_NOTIFICATION_ID,
+                        buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
+                                clickCmd, showHome, lastCommands, upDown, priority));
+            } catch (Exception e) {
+                Tuils.log(e);
             }
         } catch (Exception e) {
 //            The OS can refuse to promote this service to the foreground, or building the
@@ -151,6 +162,25 @@ public class KeeperService extends Service {
     public boolean onUnbind(Intent intent) {
         lastCommands = null;
         return true;
+    }
+
+    private static final String MINIMAL_CHANNEL = BuildConfig.APPLICATION_ID + ".running";
+
+    private static Notification buildMinimalNotification(Context c, String title, String subtitle) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(MINIMAL_CHANNEL, c.getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
+            ((NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+        }
+
+        PendingIntent open = PendingIntent.getActivity(c, 0, new Intent(c, ohi.andre.consolelauncher.LauncherActivity.class), Tuils.pendingIntentFlags(PendingIntent.FLAG_UPDATE_CURRENT));
+
+        return new NotificationCompat.Builder(c, MINIMAL_CHANNEL)
+                .setSmallIcon(R.drawable.ic_stat_tui)
+                .setContentTitle(title != null && title.length() > 0 ? title : c.getString(R.string.app_name))
+                .setContentText(subtitle != null ? subtitle : Tuils.EMPTYSTRING)
+                .setOngoing(true)
+                .setContentIntent(open)
+                .build();
     }
 
     public static Notification buildNotification(Context c, String title, String subtitle, String cmdLabel, String clickCmd, boolean showHome, CharSequence[] lastCommands, boolean upDown, int priority) {

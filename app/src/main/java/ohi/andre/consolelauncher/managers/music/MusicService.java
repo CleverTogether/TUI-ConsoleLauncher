@@ -82,10 +82,19 @@ public class MusicService extends Service implements
     // now-playing notification isn't worth taking the app down for.
     private void startForegroundSafely() {
         try {
+//            minimal notification for startForeground() (the system kills the app if it rejects
+//            it), then the full one with the command input replaces it through notify()
+            Notification minimal = buildMinimalNotification(this.getApplicationContext(), songTitle);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                startForeground(NOTIFY_ID, buildNotification(this.getApplicationContext(), songTitle), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+                startForeground(NOTIFY_ID, minimal, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
             } else {
-                startForeground(NOTIFY_ID, buildNotification(this.getApplicationContext(), songTitle));
+                startForeground(NOTIFY_ID, minimal);
+            }
+
+            try {
+                ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFY_ID, buildNotification(this.getApplicationContext(), songTitle));
+            } catch (Exception e) {
+                Tuils.log(e);
             }
         } catch (Exception e) {
             Tuils.log(e);
@@ -181,6 +190,24 @@ public class MusicService extends Service implements
     public boolean onError(MediaPlayer mp, int what, int extra) {
         mp.reset();
         return false;
+    }
+
+    private static Notification buildMinimalNotification(Context context, String songTitle) {
+        String channelId = "music_channel";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId, "Music", NotificationManager.IMPORTANCE_LOW);
+            ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+        }
+
+        PendingIntent pendInt = PendingIntent.getActivity(context, 0, new Intent(context, LauncherActivity.class), Tuils.pendingIntentFlags(PendingIntent.FLAG_UPDATE_CURRENT));
+
+        return new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_stat_tui)
+                .setContentTitle("Playing")
+                .setContentText(songTitle)
+                .setOngoing(true)
+                .setContentIntent(pendInt)
+                .build();
     }
 
     public static Notification buildNotification(Context context, String songTitle) {
