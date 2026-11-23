@@ -23,7 +23,7 @@ android {
         applicationId "com.clevertogether.tui"
         minSdk 24
         targetSdk 36
-        versionCode 301
+        versionCode 302
         versionName "v6.15.1-updated-v2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
