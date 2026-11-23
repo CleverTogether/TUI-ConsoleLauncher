@@ -49,65 +49,64 @@ public class KeeperService extends Service {
         return null;
     }
 
+    private boolean initialized = false;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(startId == 1 || startId == 0) {
+        try {
+            if(!initialized) {
+                title = XMLPrefsManager.get(Behavior.tui_notification_title);
+                subtitle = XMLPrefsManager.get(Behavior.tui_notification_subtitle);
+                clickCmd = XMLPrefsManager.get(Behavior.tui_notification_click_cmd);
+                inputFormat = XMLPrefsManager.get(Behavior.input_format);
+                showHome = XMLPrefsManager.getBoolean(Behavior.tui_notification_click_showhome);
+                inputColor = XMLPrefsManager.getColor(Behavior.tui_notification_input_color);
+                timeColor = XMLPrefsManager.getColor(Behavior.tui_notification_time_color);
+                prefix = XMLPrefsManager.get(Ui.input_prefix);
+                upDown = XMLPrefsManager.getBoolean(Behavior.tui_notification_lastcmds_updown);
+                suPrefix = XMLPrefsManager.get(Ui.input_root_prefix);
 
-            title = XMLPrefsManager.get(Behavior.tui_notification_title);
-            subtitle = XMLPrefsManager.get(Behavior.tui_notification_subtitle);
-            clickCmd = XMLPrefsManager.get(Behavior.tui_notification_click_cmd);
-            inputFormat = XMLPrefsManager.get(Behavior.input_format);
-            showHome = XMLPrefsManager.getBoolean(Behavior.tui_notification_click_showhome);
-            inputColor = XMLPrefsManager.getColor(Behavior.tui_notification_input_color);
-            timeColor = XMLPrefsManager.getColor(Behavior.tui_notification_time_color);
-            prefix = XMLPrefsManager.get(Ui.input_prefix);
-            upDown = XMLPrefsManager.getBoolean(Behavior.tui_notification_lastcmds_updown);
-            suPrefix = XMLPrefsManager.get(Ui.input_root_prefix);
+                priority = XMLPrefsManager.getInt(Behavior.tui_notification_priority);
+                if(priority > 2) priority = 2;
+                if(priority < -2) priority = -2;
 
-            priority = XMLPrefsManager.getInt(Behavior.tui_notification_priority);
-            if(priority > 2) priority = 2;
-            if(priority < -2) priority = -2;
-
-            String path = intent != null ? intent.getStringExtra(PATH_KEY) : Tuils.getFolder().getAbsolutePath();
-
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                    startForeground(ONGOING_NOTIFICATION_ID, buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
-                            clickCmd, showHome, lastCommands, upDown, priority), android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
-                } else {
-                    startForeground(ONGOING_NOTIFICATION_ID, buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
-                            clickCmd, showHome, lastCommands, upDown, priority));
+                int lastCmdSize = XMLPrefsManager.getInt(Behavior.tui_notification_lastcmds_size);
+                if(lastCmdSize > 0) {
+                    lastCommands = new CharSequence[lastCmdSize];
                 }
-            } catch (Exception e) {
-                // The OS can refuse to promote this service to the foreground (e.g. the app
-                // wasn't in an eligible state at the moment this was started) -- without this
-                // catch, that exception crashes the whole process, since this service runs in
-                // it. Not being able to show the "t-ui is running" notification isn't worth
-                // taking the app down for.
-                Tuils.log(e);
-                stopSelf();
-                return START_NOT_STICKY;
+
+                initialized = true;
+            } else if(intent != null && lastCommands != null && intent.getStringExtra(CMD_KEY) != null) {
+//                new cmd: update the list
+                updateCmds(intent.getStringExtra(CMD_KEY));
             }
 
-            int lastCmdSize = XMLPrefsManager.getInt(Behavior.tui_notification_lastcmds_size);
-            if(lastCmdSize > 0) {
-                lastCommands = new CharSequence[lastCmdSize];
+            String path = intent != null ? intent.getStringExtra(PATH_KEY) : null;
+            if(path == null) path = Tuils.getFolder() != null ? Tuils.getFolder().getAbsolutePath() : "/";
+
+            Notification notification = buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
+                    clickCmd, showHome, lastCommands, upDown, priority);
+
+//            every start request made with startForegroundService() must be answered with
+//            startForeground(), not only the first one: otherwise Android kills the app a few
+//            seconds later (this happened whenever the launcher was opened while the service was
+//            already running). Calling it again just refreshes the notification.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(ONGOING_NOTIFICATION_ID, notification, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+            } else {
+                startForeground(ONGOING_NOTIFICATION_ID, notification);
             }
-
-        } else {
-//            new cmd
-//            update the list
-
-            if(lastCommands != null) updateCmds(intent.getStringExtra(CMD_KEY));
-
-            String path = intent != null ? intent.getStringExtra(PATH_KEY) : Tuils.getFolder().getAbsolutePath();
-
-            NotificationManagerCompat.from(getApplicationContext()).notify(KeeperService.ONGOING_NOTIFICATION_ID,
-                    KeeperService.buildNotification(getApplicationContext(), title, subtitle, Tuils.getHint(path),
-                            clickCmd, showHome, lastCommands, upDown, priority));
+        } catch (Exception e) {
+//            The OS can refuse to promote this service to the foreground, or building the
+//            notification can fail: neither is worth taking the whole app down for, since this
+//            service runs in its process.
+            Tuils.log(e);
+            Tuils.toFile(e);
+            stopSelf();
+            return START_NOT_STICKY;
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     //    0 = most recent
