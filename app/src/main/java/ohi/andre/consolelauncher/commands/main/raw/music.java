@@ -193,7 +193,11 @@ public class music extends ParamCommand {
     }
 
     private static void execute(String code) {
-        Shell.SH.run("input keyevent KEYCODE_MEDIA_" + code);
+        try {
+            Shell.SH.run("input keyevent KEYCODE_MEDIA_" + code);
+        } catch (Exception e) {
+            Tuils.log(e);
+        }
     }
 
     @Override

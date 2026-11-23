@@ -593,3 +593,7 @@ low-risk for the AGP 8->9 jump.
 
 ## 2026-11-20 - minSdk 24
 - Play Console rejected the first AAB: "Play automatic protection requires a minimum SDK version of 24 or higher". minSdk raised from 21 to 24 (Android 7.0) so Play Integrity automatic protection can stay on. Android 5.0-6.0 devices (<~1% of users) are no longer supported. README updated; AAB/APK rebuilt.
+
+## 2026-11-23 - music crash hardening
+- `music -play` crashed the app. Without a device log the exact cause is unconfirmed; hardened every plausible path: `MusicService.playSong()` now guards an empty/out-of-range song list (prints a message instead of IndexOutOfBounds), recreates the MediaPlayer after `stop()` released it, and catches any exception while opening a song; `MusicManager2.init()` uses `startService` instead of `startForegroundService` (which killed the app when no song was prepared within the FGS timeout); `music.execute()` (media-key path used when `enable_music` is false) catches exceptions.
+- Next: needs a test on a device; if it still crashes, read `crash.txt` in the app folder (the crash handler writes the stack trace there).

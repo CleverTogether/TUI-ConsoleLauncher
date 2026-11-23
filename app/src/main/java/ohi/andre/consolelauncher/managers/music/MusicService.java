@@ -36,6 +36,7 @@ public class MusicService extends Service implements
     public static final int NOTIFY_ID=100001;
 
     private MediaPlayer player;
+    private boolean released = false;
     private List<Song> songs;
     private int songPosn;
     private final IBinder musicBind = new MusicBinder();
@@ -121,41 +122,47 @@ public class MusicService extends Service implements
     }
 
     public String playSong(){
-        try {
-            player.reset();
-        } catch (Exception e) {
-//            no need to log this error, as this will occur everytime
-            Tuils.log(e);
+        if(songs == null || songs.size() == 0) {
+            Tuils.sendOutput(this, "No songs found. Check the media permission and the songs folder setting.");
+            return null;
         }
+        if(songPosn < 0 || songPosn >= songs.size()) songPosn = 0;
 
-        Song playSong = songs.get(songPosn);
-
-        long id = playSong.getID();
-        if(id == -1) {
-            String path = playSong.getPath();
-            try {
-                player.setDataSource(path);
-            } catch (IOException e) {
-                Tuils.log(e);
-                Tuils.toFile(e);
-                return null;
+        try {
+//            stop() releases the player, so a new one is needed if we play again afterwards
+            if(player == null || released) {
+                player = new MediaPlayer();
+                initMusicPlayer();
+                released = false;
             }
-        } else {
-            songTitle=playSong.getTitle();
-            long currSong = playSong.getID();
-            Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currSong);
+
             try {
+                player.reset();
+            } catch (Exception e) {
+                Tuils.log(e);
+            }
+
+            Song playSong = songs.get(songPosn);
+
+            long id = playSong.getID();
+            if(id == -1) {
+                songTitle = playSong.getTitle();
+                player.setDataSource(playSong.getPath());
+            } else {
+                songTitle = playSong.getTitle();
+                Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
                 player.setDataSource(getApplicationContext(), trackUri);
             }
-            catch(Exception e) {
-                Tuils.log(e);
-                Tuils.toFile(e);
-                return null;
-            }
-        }
-        player.prepareAsync();
+            player.prepareAsync();
 
-        return playSong.getTitle();
+            return playSong.getTitle();
+        } catch (Exception e) {
+//            a song that can't be opened must not take the whole app down
+            Tuils.log(e);
+            Tuils.toFile(e);
+            Tuils.sendOutput(this, "Can't play this song: " + e.getMessage());
+            return null;
+        }
     }
 
     public void setSong(int songIndex){
@@ -244,6 +251,7 @@ public class MusicService extends Service implements
 
         try {
             player.release();
+            released = true;
         } catch (Exception e) {}
 
         setSong(0);

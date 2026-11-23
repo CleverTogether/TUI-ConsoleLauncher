@@ -85,7 +85,9 @@ public class MusicManager2 implements MediaController.MediaPlayerControl {
         playIntent = new Intent(mContext, MusicService.class);
         mContext.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
         try {
-            ContextCompat.startForegroundService(mContext, playIntent);
+//            not startForegroundService: the service only calls startForeground once a song is
+//            prepared, and Android kills the app if that doesn't happen within a few seconds
+            mContext.startService(playIntent);
         } catch (Exception e) {
             Tuils.log(e);
         }
