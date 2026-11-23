@@ -606,3 +606,4 @@ low-risk for the AGP 8->9 jump.
 
 ## 2026-11-23 - versionCode 302
 - Raised versionCode 301 -> 302 for the second Play upload (Play rejected the reused 301). This AAB includes the music/notification crash fixes and minSdk 24.
+- 302 was also rejected as already used (the Console had seen it from an earlier upload), so versionCode is now 310. Always check the Console for the highest used code before bumping.
